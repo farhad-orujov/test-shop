@@ -3,7 +3,10 @@ import connectToDatabase from '@/lib/mongodb';
 import Product from '@/lib/models/Product';
 
 // Получить товар по ID
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse<any>> {
+export async function GET(
+  request: NextRequest, 
+  { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
   const resolvedParams = await params;
   try {
     await connectToDatabase();
