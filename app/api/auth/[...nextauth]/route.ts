@@ -2,8 +2,7 @@ import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import connectToDatabase from '@/lib/mongodb';
 import User from '@/lib/models/User';
-
-import { Session } from "next-auth";
+import { JWT } from 'next-auth/jwt';
 
 declare module "next-auth" {
   interface Session {
@@ -12,8 +11,23 @@ declare module "next-auth" {
       name?: string | null;
       email?: string | null;
       image?: string | null;
+      isAdmin?: boolean;
     }
   }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id?: string;
+    isAdmin?: boolean;
+  }
+}
+
+interface IUserWithAdmin {
+  id: string;
+  email: string;
+  name: string;
+  isAdmin: boolean;
 }
 
 const handler = NextAuth({
@@ -32,7 +46,8 @@ const handler = NextAuth({
         try {
           await connectToDatabase();
           
-          const user = await User.findOne({ email: credentials.email });
+          // Allow login by email OR by username (name) to support brute-force lab
+          const user = await User.findOne({ $or: [{ email: credentials.email }, { name: credentials.email }] });
           
           if (!user) {
             return null;
@@ -44,10 +59,18 @@ const handler = NextAuth({
             return null;
           }
 
+          console.log('User from DB:', { 
+            id: user._id.toString(), 
+            email: user.email, 
+            name: user.name, 
+            isAdmin: user.isAdmin 
+          });
+
           return {
             id: user._id.toString(),
             email: user.email,
-            name: user.name
+            name: user.name,
+            isAdmin: user.isAdmin || false
           };
         } catch (error) {
           console.error('Auth error:', error);
@@ -67,12 +90,19 @@ const handler = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.isAdmin = (user as IUserWithAdmin).isAdmin;
+        console.log('JWT callback - setting token:', { id: token.id, isAdmin: token.isAdmin });
       }
       return token;
     },
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string;
+        session.user.isAdmin = token.isAdmin as boolean;
+        console.log('Session callback - setting session:', { 
+          userId: session.user.id, 
+          userIsAdmin: session.user.isAdmin 
+        });
       }
       return session;
     }

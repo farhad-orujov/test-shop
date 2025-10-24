@@ -7,6 +7,7 @@ import BurgerMenu from "./burgermenu";
 import { useState, useEffect, useRef } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { UserCheck } from "lucide-react";
 
 export default function Header() {
   const { data: session, status } = useSession();
@@ -72,13 +73,17 @@ export default function Header() {
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                     className="p-1 rounded-full border-2 border-transparent transition-all duration-200 hover:scale-110 hover:border-rose-800 active:scale-95"
                   >
-                    <Image
-                      src="/user.svg"
-                      alt="User account menu"
-                      width={24}
-                      height={24}
-                      className="text-zinc-500"
-                    />
+                    {status === 'authenticated' && session?.user ? (
+                      <UserCheck className="w-6 h-6 text-zinc-500" />
+                    ) : (
+                      <Image
+                        src="/user.svg"
+                        alt="User account menu"
+                        width={24}
+                        height={24}
+                        className="text-zinc-500"
+                      />
+                    )}
                   </button>
                   
                   {/* Dropdown Menu */}
@@ -117,7 +122,7 @@ export default function Header() {
                   )}
                 </div>
 
-                <Link href="" className="p-1 rounded-full border-2 border-transparent transition-all duration-200 hover:scale-110 hover:border-rose-800 active:scale-95">
+                <Link href="/favorites" className="p-1 rounded-full border-2 border-transparent transition-all duration-200 hover:scale-110 hover:border-rose-800 active:scale-95">
                   <Image
                     src="/heart.svg"
                     alt="Wishlist"
@@ -126,7 +131,7 @@ export default function Header() {
                     className="text-zinc-500"
                   />
                 </Link>
-                <Link href="" className="p-1 rounded-full border-2 border-transparent transition-all duration-200 hover:scale-110 hover:border-rose-800 active:scale-95">
+                <Link href="/cart" className="p-1 rounded-full border-2 border-transparent transition-all duration-200 hover:scale-110 hover:border-rose-800 active:scale-95">
                   <Image
                     src="/basket.svg"
                     alt="Shopping cart"
@@ -149,18 +154,18 @@ export default function Header() {
               </Link>
             </div>
             <div className="relative">
-              <Link href="#" className="py-1 text-zinc-300 transition-colors duration-300 hover:text-white relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 after:ease-in-out hover:after:origin-bottom-left hover:after:scale-x-100 active:text-gray-400">
+              <Link href="/new-items" className="py-1 text-zinc-300 transition-colors duration-300 hover:text-white relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 after:ease-in-out hover:after:origin-bottom-left hover:after:scale-x-100 active:text-gray-400">
                 New Items
               </Link>
             </div>
             <div className="relative">
-              <Link href="#" className="py-1 text-zinc-300 transition-colors duration-300 hover:text-white relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 after:ease-in-out hover:after:origin-bottom-left hover:after:scale-x-100 active:text-gray-400">
+              <Link href="/popular" className="py-1 text-zinc-300 transition-colors duration-300 hover:text-white relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 after:ease-in-out hover:after:origin-bottom-left hover:after:scale-x-100 active:text-gray-400">
                 Popular
               </Link>
             </div>
             <div className="relative">
-              <Link href="#" className="py-1 text-zinc-300 transition-colors duration-300 hover:text-white relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 after:ease-in-out hover:after:origin-bottom-left hover:after:scale-x-100 active:text-gray-400">
-                Contacts
+              <Link href="/about-us" className="py-1 text-zinc-300 transition-colors duration-300 hover:text-white relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 after:ease-in-out hover:after:origin-bottom-left hover:after:scale-x-100 active:text-gray-400">
+                About Us
               </Link>
             </div>
           </div>

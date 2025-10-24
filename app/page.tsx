@@ -5,6 +5,7 @@ import ScrollingText from "./components/ui/scrollingtext";
 import { beniga, tilda } from "./fonts";
 import clsx from "clsx";
 import Link from "next/link";
+import Footer from "./components/footer/footer";
 
 export default function Home() {
   return (
@@ -110,6 +111,8 @@ export default function Home() {
           <img src="/Item3.jpg" alt="" />
         </div>
       </div>
+      
+      <Footer />
     </>
   );
 }

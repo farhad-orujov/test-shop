@@ -10,7 +10,7 @@ export const ClearButton: React.FC<ClearButtonProps> = ({ classname, onClick }) 
     <button
       type="button"
       onClick={onClick}
-      className={clsx("w-full mt-2 py-2 px-4 bg-gray-300 text-gray-800 font-bold rounded-md hover:bg-gray-300 transition-colors", classname)}
+      className={clsx("w-full my-2 py-2 px-4 bg-gray-300 text-gray-800 font-bold rounded-md hover:bg-gray-300 transition-colors", classname)}
     >
       Clear Filter
     </button>

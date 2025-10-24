@@ -1,17 +1,28 @@
 import clsx from "clsx";
 import { beniga } from "@/app/fonts";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CheckboxOne } from "@/app/components/ui/checkboxone";
 import { RadioOne } from "@/app/components/ui/radioone";
 import { ColorPicker } from "@/app/components/ui/colorpicker";
 import { PriceRange } from "@/app/components/ui/pricerange";
-import { SubmitButton } from "../ui/submitbutton";
 import { ClearButton } from "../ui/clearbutton";
+
+export interface FilterValues {
+  brands: string[];
+  categories: string[];
+  gender: string;
+  color: string;
+  minPrice: string;
+  maxPrice: string;
+}
 
 interface FilterProps {
   classname?: string;
   isModal?: boolean;
   onClose?: () => void;
+  initialFilters?: Partial<FilterValues>;
+  onApply: (filters: FilterValues) => void;
+  onClearFilters?: () => void;
 }
 
 const customColors = [
@@ -27,21 +38,68 @@ export const Filter: React.FC<FilterProps> = ({
   classname,
   isModal,
   onClose,
+  initialFilters,
+  onApply,
+onClearFilters,
 }) => {
-  const [selectedValues, setSelectedValues] = useState<string[]>([]);
-  const [selectedSize, setSelectedSize] = useState("");
-  const [selectedGender, setSelectedGender] = useState("");
-  const [selectedColor, setSelectedColor] = useState("");
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
+  const [brands, setBrands] = useState(initialFilters?.brands || []);
+  const [categories, setCategories] = useState(
+    initialFilters?.categories || [],
+  );
+  const [gender, setGender] = useState(initialFilters?.gender || "");
+  const [color, setColor] = useState(initialFilters?.color || "");
+  const [minPrice, setMinPrice] = useState(initialFilters?.minPrice || "");
+  const [maxPrice, setMaxPrice] = useState(initialFilters?.maxPrice || "");
 
-  const handleClearFilters = () => {
-    setSelectedValues([]);
-    setSelectedSize("");
-    setSelectedGender("");
-    setSelectedColor("");
+  useEffect(() => {
+    setBrands(initialFilters?.brands || []);
+    setCategories(initialFilters?.categories || []);
+    setGender(initialFilters?.gender || "");
+    setColor(initialFilters?.color || "");
+    setMinPrice(initialFilters?.minPrice || "");
+    setMaxPrice(initialFilters?.maxPrice || "");
+  }, [initialFilters]);
+
+  const brandOptions = [
+    { id: "1", label: "Adidas", value: "adidas" },
+    { id: "2", label: "Nike", value: "nike" },
+    { id: "3", label: "Puma", value: "puma" },
+    { id: "4", label: "Reebok", value: "reebok" },
+    { id: "5", label: "Under Armour", value: "under armour" },
+  ];
+
+  const categoryOptions = [
+    { id: "cat-1", label: "Running", value: "running" },
+    { id: "cat-2", label: "Football", value: "football" },
+    { id: "cat-3", label: "Basketball", value: "basketball" },
+    { id: "cat-4", label: "Walking", value: "walking" },
+    { id: "cat-5", label: "Golf", value: "golf" },
+  ];
+
+  const handleClear = () => {
+    setBrands([]);
+    setCategories([]);
+    setGender("");
+    setColor("");
     setMinPrice("");
     setMaxPrice("");
+    if (onClearFilters) {
+      onClearFilters();
+    }
+  };
+
+  const handleApply = () => {
+    onApply({
+      brands,
+      categories,
+      gender,
+      color,
+      minPrice,
+      maxPrice,
+    });
+    if (isModal && onClose) {
+      onClose();
+    }
   };
 
   return (
@@ -50,7 +108,7 @@ export const Filter: React.FC<FilterProps> = ({
         {isModal && (
           <div className="mb-4 flex justify-between">
             <h2 className={clsx(beniga.className, "text-lg font-bold")}>
-              Фильтры
+              Filters
             </h2>
             <button onClick={onClose} className="text-2xl">
               &times;
@@ -58,62 +116,47 @@ export const Filter: React.FC<FilterProps> = ({
           </div>
         )}
         <PriceRange
-          title="Цена"
+          title="Price"
           minPrice={minPrice}
           maxPrice={maxPrice}
           onMinChange={setMinPrice}
           onMaxChange={setMaxPrice}
         />
         <CheckboxOne
-          title="Бренд"
-          options={[
-            { id: "1", label: "Adidas", value: "adidas" },
-            { id: "2", label: "Nike", value: "nike" },
-            { id: "3", label: "Puma", value: "puma" },
-            { id: "4", label: "Reebok", value: "reebok" },
-            { id: "5", label: "Under Armour", value: "underarmour" },
-          ]}
-          selectedValues={selectedValues}
-          onChange={setSelectedValues}
+          title="Brand"
+          options={brandOptions}
+          selectedValues={brands}
+          onChange={setBrands}
+        />
+        <CheckboxOne
+          title="Category"
+          options={categoryOptions}
+          selectedValues={categories}
+          onChange={setCategories}
         />
         <RadioOne
-          title="Размер"
-          name="size"
-          options={[
-            { id: "size-s", label: "S", value: "s" },
-            { id: "size-m", label: "M", value: "m" },
-            { id: "size-l", label: "L", value: "l" },
-            { id: "size-xl", label: "XL", value: "xl" },
-          ]}
-          selectedValue={selectedSize}
-          onChange={setSelectedSize}
-        />
-        <RadioOne
-          title="Пол"
+          title="Gender"
           name="gender"
           options={[
             { id: "males", label: "Males", value: "males" },
             { id: "females", label: "Females", value: "females" },
           ]}
-          selectedValue={selectedGender}
-          onChange={setSelectedGender}
+          selectedValue={gender}
+          onChange={setGender}
         />
         <ColorPicker
-          title="Цвет товара"
+          title="Product Color"
           colors={customColors}
-          selectedValue={selectedColor}
-          onChange={setSelectedColor}
+          selectedValue={color}
+          onChange={setColor}
         />
-        <SubmitButton classname="mt-6" />
-        <ClearButton onClick={handleClearFilters} classname="" />
-        {isModal && (
-          <button
-            onClick={onClose}
-            className="mt-4 w-full rounded-md bg-neutral-900 py-2 text-white"
-          >
-            Применить
-          </button>
-        )}
+        <button
+          onClick={handleApply}
+          className="mt-6 w-full rounded-md bg-neutral-900 py-2 text-white"
+        >
+          Apply Filters
+        </button>
+        <ClearButton onClick={handleClear} classname="mt-2" />
       </div>
     </>
   );

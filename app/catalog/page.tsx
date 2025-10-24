@@ -1,10 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Filter } from "@/app/components//filter/filter";
+import { useSession } from "next-auth/react";
+import { Filter, FilterValues } from "@/app/components/filter/filter";
 import clsx from "clsx";
 import { beniga } from "@/app/fonts";
 import { GoodsCard } from "@/app/components/ui/goodscard";
+
+interface ColorVariant {
+  colorName: string;
+  colorCode: string;
+  image: string;
+}
 
 interface Product {
   _id: string;
@@ -14,47 +21,86 @@ interface Product {
   image: string;
   rating: number;
   tags: string[];
+  colorVariants?: ColorVariant[];
+  brand?: string;
+  category?: string;
 }
 
 export default function CatalogPage() {
-  const [selectedValues, setSelectedValues] = useState<string[]>([]);
-  const [selectedSize, setSelectedSize] = useState("");
-  const [selectedColor, setSelectedColor] = useState("");
+  const { data: session } = useSession();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const options = [
-    { id: "1", label: "Option 1", value: "option1" },
-    { id: "2", label: "Option 2", value: "option2" },
-    { id: "3", label: "Option 3", value: "option3" },
-  ];
-
-  const customColors = [
-    { id: "custom-1", value: "black", color: "#000000" },
-    { id: "custom-2", value: "white", color: "#FFFFFF" },
-    { id: "custom-3", value: "gray", color: "#6B7280" },
-    { id: "custom-4", value: "navy", color: "#1E3A8A" },
-    { id: "custom-5", value: "brown", color: "#92400E" },
-    { id: "custom-6", value: "orange", color: "#EA580C" },
-  ];
+  const [filters, setFilters] = useState<Partial<FilterValues>>({
+    brands: [],
+    categories: [],
+    gender: "",
+    color: "",
+    minPrice: "",
+    maxPrice: "",
+  });
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    fetchProducts(filters);
+  }, [filters]);
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (currentFilters: Partial<FilterValues>) => {
+    setLoading(true);
     try {
-      const response = await fetch('/api/products');
+      let url = "/api/products";
+      const params = new URLSearchParams();
+
+      if (currentFilters.brands && currentFilters.brands.length > 0) {
+        currentFilters.brands.forEach((brand) => params.append("brand", brand));
+      }
+      if (currentFilters.categories && currentFilters.categories.length > 0) {
+        currentFilters.categories.forEach((category) =>
+          params.append("category", category),
+        );
+      }
+      if (currentFilters.gender) {
+        params.append("gender", currentFilters.gender);
+      }
+      if (currentFilters.color) {
+        params.append("color", currentFilters.color);
+      }
+      if (currentFilters.minPrice) {
+        params.append("minPrice", currentFilters.minPrice);
+      }
+      if (currentFilters.maxPrice) {
+        params.append("maxPrice", currentFilters.maxPrice);
+      }
+
+      if (params.toString()) {
+        url += `?${params.toString()}`;
+      }
+
+      const response = await fetch(url);
       if (response.ok) {
         const data = await response.json();
         setProducts(data);
       }
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error("Error fetching products:", error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleApplyFilters = (newFilters: FilterValues) => {
+    setFilters(newFilters);
+  };
+
+  const handleClearFilters = () => {
+    const clearedFilters = {
+      brands: [],
+      categories: [],
+      gender: "",
+      color: "",
+      minPrice: "",
+      maxPrice: "",
+    };
+    setFilters(clearedFilters);
   };
 
   if (loading) {
@@ -72,7 +118,7 @@ export default function CatalogPage() {
       <h1
         className={clsx(
           beniga.className,
-          "text-xl font-bold text-neutral-900 mt-6 border-b-[2px] border-zinc-200 "
+          "text-xl font-bold text-neutral-900 mt-6 border-b-[2px] border-zinc-200 ",
         )}
       >
         CATALOG
@@ -82,7 +128,7 @@ export default function CatalogPage() {
           onClick={() => setIsFilterOpen(true)}
           className="my-4 flex items-center gap-2 rounded-[14px] border p-2 ml-21"
         >
-          <span>Фильтры</span>
+          <span>Filters</span>
         </button>
       </div>
       <div className="flex flex-row">
@@ -91,14 +137,14 @@ export default function CatalogPage() {
             "fixed inset-0 z-40 transition-opacity duration-300 ease-in-out lg:hidden",
             isFilterOpen
               ? "bg-black/50 opacity-100"
-              : "opacity-0 pointer-events-none"
+              : "opacity-0 pointer-events-none",
           )}
           onClick={() => setIsFilterOpen(false)}
         >
           <div
             className={clsx(
               "absolute left-0 top-0 h-full w-4/5 max-w-sm transform overflow-y-auto bg-white p-4 transition-transform duration-300 ease-in-out",
-              isFilterOpen ? "translate-x-0" : "-translate-x-full"
+              isFilterOpen ? "translate-x-0" : "-translate-x-full",
             )}
             onClick={(e) => e.stopPropagation()}
           >
@@ -106,25 +152,37 @@ export default function CatalogPage() {
               classname="w-full"
               isModal={true}
               onClose={() => setIsFilterOpen(false)}
+              initialFilters={filters}
+              onApply={handleApplyFilters}
+              onClearFilters={handleClearFilters}
             />
           </div>
         </div>
 
         <div className="hidden w-[200px] pr-2 lg:block lg:border-r-[2px] lg:border-zinc-200">
-          <Filter classname="w-full" />
+          <Filter
+            classname="w-full"
+            initialFilters={filters}
+            onApply={handleApplyFilters}
+            onClearFilters={handleClearFilters}
+          />
         </div>
         <div className="w-full">
           <div className="mx-auto gap-y-8 sm:gap-y-12 md:gap-y-4 flex max-w-max flex-nowrap lg:justify-start justify-center px-10 flex-wrap justify-center px-0">
             {products.map((product) => (
               <GoodsCard
                 key={product._id}
+                _id={product._id}
                 pathtoimg={product.image}
                 alt={product.name}
                 rating={product.rating}
                 price={product.price}
                 originalprice={product.originalPrice}
                 tags={product.tags}
+                colorVariants={product.colorVariants}
                 classname=""
+                isAdmin={session?.user?.isAdmin || false}
+                onDelete={() => fetchProducts(filters)}
               />
             ))}
           </div>
