@@ -31,7 +31,7 @@ export default function CTFPage() {
 
       <ol className="list-decimal pl-6 mb-4">
         <li>Open a product from <Link href="/catalog">Catalog</Link> and inspect the Comments section to find the admin username (hidden in DOM).</li>
-        <li>Try logging in at <Link href="/auth/signin">Sign in</Link> using the username (the auth accepts username or email) and brute-force the password (the lab uses a weak password for practice).</li>
+        <li>Try logging in at <Link href="/auth/signin">Sign in</Link> using the username (the auth accepts username or email) and finding the password.</li>
         <li>After successful login, open <code>/admin/ctf</code> to view the admin-only key.</li>
         <li>Submit that key below.</li>
       </ol>
@@ -41,7 +41,7 @@ export default function CTFPage() {
         <ul className="mt-2 list-disc pl-5">
           <li>Comments are vulnerable to stored XSS and contain a hidden element with admin username.</li>
           <li>Auth accepts username or email as the first credential; try using the revealed username directly on the signin form.</li>
-          <li>Use simple passwords when brute-forcing for this lab (e.g. <code>academy123</code>).</li>
+          <li>Use simple passwords when finding the admin password for this lab (e.g. <code>academy123</code>).</li>
         </ul>
       </details>
 
