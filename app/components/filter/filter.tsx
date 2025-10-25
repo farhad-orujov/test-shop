@@ -74,6 +74,7 @@ onClearFilters,
     { id: "cat-3", label: "Basketball", value: "basketball" },
     { id: "cat-4", label: "Walking", value: "walking" },
     { id: "cat-5", label: "Golf", value: "golf" },
+    { id: "cat-6", label: "Training", value: "training" },
   ];
 
   const handleClear = () => {

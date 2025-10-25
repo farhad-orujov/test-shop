@@ -29,7 +29,8 @@ export const SneakerCategories = {
   FOOTBALL: 'Football',
   BASKETBALL: 'Basketball',
   WALKING: 'Walking',
-  GOLF: 'Golf'
+  GOLF: 'Golf',
+  TRAINING: 'Training'
 } as const;
 
 export type SneakerCategory = typeof SneakerCategories[keyof typeof SneakerCategories];

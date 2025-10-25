@@ -110,6 +110,7 @@ export default function PopularPage() {
                 _id={p._id}
                 pathtoimg={p.image}
                 alt={p.name}
+                category={(p as any).category || ''}
                 rating={p.rating}
                 price={p.price}
                 originalprice={p.originalPrice}

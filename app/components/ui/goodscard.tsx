@@ -27,6 +27,7 @@ interface GoodsCardProps {
   originalprice?: number;
   tags?: string[];
   colorVariants?: ColorVariant[];
+  category?: string;
   isAdmin?: boolean;
   onDelete?: () => void;
 }
@@ -41,6 +42,7 @@ export const GoodsCard: React.FC<GoodsCardProps> = ({
   originalprice,
   tags,
   colorVariants,
+  category,
   isAdmin = false,
   onDelete,
 }) => {
@@ -214,13 +216,13 @@ export const GoodsCard: React.FC<GoodsCardProps> = ({
             <div className="pl-6 h-[180px]">
               <h2
                 className={clsx(
-                  "font-bold text-lg mt-6 uppercase",
+                  "font-bold text-lg mt-6 uppercase h-[60px]",
                   tilda.className
                 )}
               >
                 {alt}
               </h2>
-              <p className="mb-2 mt-1">type</p>
+              <p className="mb-2 mt-1 capitalize text-sm text-zinc-500">{category || ''}</p>
               <div className="flex">
                 <RatingStars value={rating} />
                 <p className="ml-2">{rating}</p>
@@ -229,7 +231,7 @@ export const GoodsCard: React.FC<GoodsCardProps> = ({
                 {price} AZN{" "}
                 {originalprice ? (
                   <span className="text-sm text-zinc-400 line-through">
-                    {originalprice} USD
+                    {originalprice} AZN
                   </span>
                 ) : (
                   ""

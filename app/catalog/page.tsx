@@ -168,13 +168,14 @@ export default function CatalogPage() {
           />
         </div>
         <div className="w-full">
-          <div className="mx-auto gap-y-8 sm:gap-y-12 md:gap-y-4 flex max-w-max flex-nowrap lg:justify-start justify-center px-10 flex-wrap justify-center px-0">
+          <div className="mx-auto gap-y-8 sm:gap-y-12 md:gap-y-12 flex max-w-max flex-nowrap lg:justify-start justify-center px-10 flex-wrap justify-center px-0">
             {products.map((product) => (
               <GoodsCard
                 key={product._id}
                 _id={product._id}
                 pathtoimg={product.image}
                 alt={product.name}
+                category={product.category || ''}
                 rating={product.rating}
                 price={product.price}
                 originalprice={product.originalPrice}

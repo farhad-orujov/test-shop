@@ -113,11 +113,12 @@ export default function NewItemsPage() {
           )}
 
           {products.map((p) => (
-            <div key={p._id} className="snap-start flex-shrink-0 w-[320px] sm:w-[360px] md:w-[420px]">
+            <div key={p._id} className="snap-start flex-shrink-0 w-[320px] sm:w-[360px] md:w-[320px]">
               <GoodsCard
                 _id={p._id}
                 pathtoimg={p.image}
                 alt={p.name}
+                category={(p as any).category || ''}
                 rating={p.rating}
                 price={p.price}
                 originalprice={p.originalPrice}

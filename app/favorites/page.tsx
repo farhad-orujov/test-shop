@@ -40,6 +40,7 @@ export default function FavoritesPage() {
             _id={p._id || p.id}
             pathtoimg={p.image}
             alt={p.name}
+            category={(p as any).category || ''}
             rating={p.rating || 0}
             price={p.price || 0}
             originalprice={p.originalPrice}

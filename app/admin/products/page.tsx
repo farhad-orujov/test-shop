@@ -38,7 +38,7 @@ export default function AdminProductsPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const variantFileInputRef = useRef<HTMLInputElement>(null);
 
-  // Предзаполненные примеры для копирования
+  // Pre-filled examples for quick copy
   const sampleData = [
     {
       name: "Dropset Control Training Shoes",
@@ -70,6 +70,7 @@ export default function AdminProductsPage() {
       setMainImageFile(file);
       
       // Создаем preview локально
+      // Create a local preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result as string);
@@ -84,6 +85,7 @@ export default function AdminProductsPage() {
       setVariantImageFile(file);
       
       // Создаем preview локально
+      // Create a local preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setVariantPreviewUrl(reader.result as string);
@@ -93,7 +95,7 @@ export default function AdminProductsPage() {
     }
   };
 
-  // Функция для генерации slug из названия
+  // Function to generate a slug from the product name
   const generateSlug = (name: string): string => {
     return name
       .toLowerCase()
@@ -145,7 +147,7 @@ export default function AdminProductsPage() {
       }));
       data.append('colorVariants', JSON.stringify(colorVariantsData));
 
-      console.log('Отправка данных на /api/products...');
+  console.log('Sending product data to /api/products...');
       
       // Отправляем данные на наш API endpoint
       const response = await fetch('/api/products', {
@@ -156,16 +158,16 @@ export default function AdminProductsPage() {
       const result = await response.json();
       
       if (response.ok) {
-        console.log('Товар успешно создан:', result);
+        console.log('Product successfully created:', result);
         alert('Product created successfully!');
         router.push('/admin/products');
       } else {
-        console.error('Ошибка при создании товара:', result);
-        alert('Ошибка при создании товара: ' + (result.error || 'Неизвестная ошибка'));
+        console.error('Error creating product:', result);
+        alert('Error creating product: ' + (result.error || 'Unknown error'));
       }
     } catch (error) {
-      console.error('Ошибка при создании товара:', error);
-      alert('Ошибка при создании товара: ' + (error as Error).message);
+      console.error('Error creating product:', error);
+      alert('Error creating product: ' + (error as Error).message);
     } finally {
       setIsSubmitting(false);
     }
@@ -186,7 +188,7 @@ export default function AdminProductsPage() {
 
     setColorVariants([...colorVariants, variant]);
     
-    // Сбрасываем новый вариант
+    // Reset new variant
     setNewVariant({
       color: "",
       colorCode: "#000000",
@@ -344,11 +346,12 @@ export default function AdminProductsPage() {
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
           >
             <option value="">Select a category</option>
-            <option value="shoes">Shoes</option>
-            <option value="clothing">Clothing</option>
-            <option value="accessories">Accessories</option>
-            <option value="electronics">Electronics</option>
-            <option value="sports">Sports</option>
+            <option value="running">Running</option>
+            <option value="football">Football</option>
+            <option value="basketball">Basketball</option>
+            <option value="walking">Walking</option>
+            <option value="golf">Golf</option>
+            <option value="training">Training</option>
           </select>
         </div>
 
