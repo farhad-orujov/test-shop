@@ -5,6 +5,8 @@ import Image from 'next/image'
 import { beniga } from '@/app/fonts'
 import clsx from 'clsx'
 import { useState, useEffect, FormEvent } from 'react'
+import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 
 interface ColorVariant {
   colorName: string;
@@ -31,6 +33,8 @@ export default function ItemPage({
 }) {
   const { item } = use(params)
   const searchParams = useSearchParams()
+  const router = useRouter()
+  const { data: session, status } = useSession()
   
   const [productData, setProductData] = useState<ProductData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -210,10 +214,70 @@ export default function ItemPage({
 
           {/* Кнопки действий */}
           <div className="space-y-3 pt-4">
-            <button className="w-full bg-rose-500 text-white py-3 px-6 rounded-lg hover:bg-rose-600 transition-colors">
+            <button
+              onClick={async () => {
+                if (status === 'loading') return;
+                
+                if (status !== 'authenticated') {
+                  router.push('/auth/signin');
+                  return;
+                }
+
+                try {
+                  const res = await fetch('/api/users/cart', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId: item, quantity: 1 })
+                  });
+                  
+                  const data = await res.text();
+                  
+                  if (!res.ok) {
+                    console.error('Failed to add to cart:', data);
+                    alert('Failed to add item to cart. Please try again.');
+                  } else {
+                    alert('Added to cart successfully!');
+                  }
+                } catch (err) {
+                  console.error('Error adding to cart:', err);
+                  alert('An error occurred while adding to cart. Please try again.');
+                }
+              }}
+              className="w-full bg-rose-500 text-white py-3 px-6 rounded-lg hover:bg-rose-600 transition-colors"
+            >
               Add to cart
             </button>
-            <button className="w-full border border-rose-500 text-rose-500 py-3 px-6 rounded-lg hover:bg-rose-50 transition-colors">
+            <button
+              onClick={async () => {
+                if (status === 'loading') return;
+                
+                if (status !== 'authenticated') {
+                  router.push('/auth/signin');
+                  return;
+                }
+
+                try {
+                  const res = await fetch('/api/users/favorites', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId: item })
+                  });
+                  
+                  const data = await res.text();
+                  
+                  if (!res.ok) {
+                    console.error('Failed to toggle favorite:', data);
+                    alert('Failed to add item to favorites. Please try again.');
+                  } else {
+                    alert('Added to favorites successfully!');
+                  }
+                } catch (err) {
+                  console.error('Error toggling favorite:', err);
+                  alert('An error occurred while adding to favorites. Please try again.');
+                }
+              }}
+              className="w-full border border-rose-500 text-rose-500 py-3 px-6 rounded-lg hover:bg-rose-50 transition-colors"
+            >
               Add to favorites
             </button>
           </div>

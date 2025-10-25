@@ -5,10 +5,20 @@ import { uploadToCloudinary } from '@/lib/cloudinary';
 
 // Get all products with filtering
 export async function GET(request: NextRequest) {
+  // Add CORS headers for debugging
+  const response = new NextResponse();
+  response.headers.set('Access-Control-Allow-Origin', '*');
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+
   try {
+    console.log('Connecting to database...');
     await connectToDatabase();
+    console.log('Database connected successfully');
     
     const { searchParams } = new URL(request.url);
+    console.log('Search params:', Object.fromEntries(searchParams));
+    
     const category = searchParams.getAll('category');
     const search = searchParams.get('search');
   const brand = searchParams.getAll('brand');
@@ -65,8 +75,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(products);
   } catch (error) {
     console.error('Error fetching products:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Error details:', errorMessage);
     return NextResponse.json(
-      { error: 'Failed to fetch products' },
+      { error: 'Failed to fetch products', details: errorMessage },
       { status: 500 }
     );
   }
