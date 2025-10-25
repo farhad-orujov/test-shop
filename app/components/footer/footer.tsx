@@ -10,7 +10,8 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-start gap-6">
           <div className="flex items-center gap-4">
             <Link href="/">
-              <Image src="/Logo.png" alt="Logo" width={140} height={40} />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/Logo.png" alt="Logo" width={140} height={40} />
             </Link>
           </div>
 

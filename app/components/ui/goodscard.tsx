@@ -205,13 +205,38 @@ export const GoodsCard: React.FC<GoodsCardProps> = ({
               </div>
             </div>
             <div className="h-50 overflow-hidden border-t-2 border-b-2 border-zinc-200">
-              <Image
-                src={pathtoimg}
-                alt={alt}
-                width={400}
-                height={100}
-                className={clsx("", classname)}
-              />
+              {pathtoimg ? (
+                pathtoimg.startsWith('data:') ? (
+                  // Handle data URIs directly with img tag
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={pathtoimg}
+                    alt={alt}
+                    width={400}
+                    height={100}
+                    className={clsx("", classname)}
+                  />
+                ) : (
+                  // Use Next.js Image with our custom loader for everything else
+                  <Image
+                    src={pathtoimg}
+                    alt={alt}
+                    width={400}
+                    height={100}
+                    className={clsx("", classname)}
+                    priority
+                  />
+                )
+              ) : (
+                // Fallback for empty/undefined src
+                <Image
+                  src="/placeholder-color.jpg"
+                  alt={alt}
+                  width={400}
+                  height={100}
+                  className={clsx("", classname)}
+                />
+              )}
             </div>
             <div className="pl-6 h-[180px]">
               <h2

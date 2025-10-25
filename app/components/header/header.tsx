@@ -58,7 +58,8 @@ export default function Header() {
           <div className="relative w-full h-14 flex items-center justify-between border-b-[1px] border-zinc-700">
             <div className="flex-1 basis-1/5">
               <Link href={"/"}>
-                <Image src={"/Logo.png"} width={200} height={200} alt={"Logo"} />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/Logo.png" width={200} height={200} alt="Logo" />
               </Link>
             </div>
             <div className="flex-1 basis-3/5">
@@ -76,7 +77,8 @@ export default function Header() {
                     {status === 'authenticated' && session?.user ? (
                       <UserCheck className="w-6 h-6 text-zinc-500" />
                     ) : (
-                      <Image
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
                         src="/user.svg"
                         alt="User account menu"
                         width={24}
@@ -123,7 +125,8 @@ export default function Header() {
                 </div>
 
                 <Link href="/favorites" className="p-1 rounded-full border-2 border-transparent transition-all duration-200 hover:scale-110 hover:border-rose-800 active:scale-95">
-                  <Image
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
                     src="/heart.svg"
                     alt="Wishlist"
                     width={24}
@@ -132,7 +135,8 @@ export default function Header() {
                   />
                 </Link>
                 <Link href="/cart" className="p-1 rounded-full border-2 border-transparent transition-all duration-200 hover:scale-110 hover:border-rose-800 active:scale-95">
-                  <Image
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
                     src="/basket.svg"
                     alt="Shopping cart"
                     width={28}

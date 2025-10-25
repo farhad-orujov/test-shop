@@ -118,13 +118,20 @@ export default function ItemPage({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Изображение товара */}
         <div className="relative w-full aspect-[7/5] bg-gray-100 rounded-lg overflow-hidden">
-          <Image
-            src={displayImage}
-            alt={productData.name}
-            fill
-            className="object-cover"
-            priority
-          />
+          {displayImage && typeof displayImage === 'string' && displayImage.startsWith('data:') ? (
+            // Data URIs cause the Next.js image optimizer to return 400 in production.
+            // Use a plain <img> tag for inline/base64 images.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={displayImage} alt={productData.name} className="w-full h-full object-cover" />
+          ) : (
+            <Image
+              src={displayImage || '/placeholder-color.jpg'}
+              alt={productData.name}
+              fill
+              className="object-cover"
+              priority
+            />
+          )}
         </div>
 
         {/* Информация о товаре */}
